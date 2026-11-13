@@ -71,4 +71,92 @@ test.describe('Data entry form validation',()=>{
         await expect(maleRadiobtn).not.toBeChecked()
     })
 
+    /4.checkbox validation
+    test('4.Checkbox validation',async({page})=>{
+        //1.select sun checkbox
+        const sundayCheckbox= page.getByLabel('Sun')
+        await sundayCheckbox.check()
+        await expect(sundayCheckbox).toBeChecked()
+
+        //select all the checkboxes(Mon-Sun)
+        const allDays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+        for(const day of allDays){
+            const checkboxfield=page.getByLabel(day)
+            await checkboxfield.check()
+            await expect(checkboxfield).toBeChecked()
+        }
+
+        //uncheck fri,sat,sun and then verify 
+        for(const day of ['Fri','Sat','Sun']){
+            const uncheckfield=page.getByLabel(day)
+            await uncheckfield.uncheck()
+            await expect(uncheckfield).not.toBeChecked()
+            
+        }
+
+        //toggle all checkboxes if check->uncheck and if uncheck->check
+        for(const day of allDays){
+            const checkboxfield=page.getByLabel(day)
+            if(await checkboxfield.isChecked()){
+                await checkboxfield.uncheck()
+                await expect(checkboxfield).not.toBeChecked()
+            }
+            else{
+                await checkboxfield.check()
+                await expect(checkboxfield).toBeChecked()
+            }
+        }
+        //select checkbox with Label Fri
+        const fridayField=page.getByLabel('Fri')
+        await fridayField.check()
+        await expect(fridayField).toBeChecked()
+
+        await page.waitForTimeout(8000)
+
+    })
+
+    test('5.Button Validations',async({page})=>{
+        
+        const submitbutton= page.getByRole('button',{name:'Submit'}).first()
+        await expect(submitbutton).toBeVisible()
+        await submitbutton.click()
+        await expect(submitbutton).toBeEnabled()
+        await page.waitForTimeout(8000)
+        //await expect(buttonfield).toBeChecked()
+    })
+
+    //field level functional validations
+    test('6.Field level functional validation',async({page})=>{
+        //On submission of empty field error message should appear 
+        const namefield=page.getByLabel('Full name')
+        const emailfield=page.getByLabel('Email')
+        const phonefield=page.getByLabel('Phone')
+        const addfield=page.getByLabel('Address')
+        const errmsg=page.locator('#formErrors')
+
+        await namefield.fill('')
+        await emailfield.fill('')
+        await phonefield.fill('')
+        await addfield.fill('')
+
+        const buttonfield =page.getByRole('button',{name:'Submit'}).first()
+        await buttonfield.click()
+
+        await expect(errmsg).toBeVisible()
+        await expect(errmsg).toContainText('Please fix the following:')
+    })
+
+    //email address validation 
+    test('7.Email Address validation',async({page})=>{
+        const emailfield=page.getByLabel('Email')
+        const submitbutton=page.getByRole('button',{name:'Submit'}).first()
+        const errmsg=page.locator('#formErrors')
+        await emailfield.fill('sss.com')
+        await submitbutton.click()
+        
+        await expect(errmsg).toBeVisible()
+        await expect(errmsg).toContainText('Please enter a valid email address.')
+
+    })
+
 });
