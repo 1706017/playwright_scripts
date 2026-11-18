@@ -67,9 +67,12 @@ test.describe('Test suite for dropdown validations',()=>{
         //3.Multiple options should be selected using labels red,blue,green
         await multidropdwm.selectOption([{label:'Red'},{label:'Blue'},{label:'Green'}])
         await expect(multidropdwm).toHaveValues(['red','blue','green'])
-        
-        
         console.log('Multiselection of dropdown test case is passed')
+
+        //4.Multiselect dropdown option count
+        const multiselectoptions =page.locator('#colors option')
+        await expect(multiselectoptions).toHaveCount(4)
+        console.log('Multiple selection dropdown passed the count of option test case')
 
         
     })
